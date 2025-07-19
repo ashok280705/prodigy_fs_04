@@ -89,6 +89,8 @@ export default function Register() {
           onChange={(e) => setPhone(e.target.value)}
           className="w-full mb-4 p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="+1 234 567 890"
+          maxLength={10}
+          minLength={10}
         />
 
         <label className="block mb-2 text-sm font-semibold">Password</label>
@@ -135,7 +137,7 @@ export default function Register() {
 
         <p className="text-sm text-center text-gray-400">
           Already have an account?{" "}
-          <Link href="/auth/login" className="underline text-white hover:text-blue-400">
+          <Link href="/login" className="underline text-white hover:text-blue-400">
             Login
           </Link>
         </p>

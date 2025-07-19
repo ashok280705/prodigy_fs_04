@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -16,12 +17,14 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
+       required: false,
+   
     },
     phone: {
       type: String,
       trim: true,
+      sparse: (v) => (v ? v.replace(/\D/g, "") : ""), // Store only digits
+      sparse: true, // Allow empty phone numbers
     },
   },
   {
