@@ -6,7 +6,6 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -27,7 +26,6 @@ export const authOptions = {
         return { id: user._id.toString(), name: user.name, email: user.email };
       },
     }),
-
   ],
   callbacks: {
     async signIn({ user, account }) {
@@ -38,7 +36,8 @@ export const authOptions = {
           await new User({
             name: user.name,
             email: user.email,
-            password: "",
+            password: "google-oauth", // <--- FIXED!
+            provider: "google",
             phone: "",
           }).save();
         }
@@ -46,11 +45,12 @@ export const authOptions = {
       return true;
     },
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user?.id) token.id = user.id;
+      else if (user?.sub) token.id = user.sub;
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
+      session.user.id = token.id || token.sub;
       return session;
     },
   },
@@ -59,7 +59,6 @@ export const authOptions = {
     signIn: "/login",
   },
 };
-
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

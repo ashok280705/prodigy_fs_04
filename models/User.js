@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema(
       sparse: (v) => (v ? v.replace(/\D/g, "") : ""), // Store only digits
       sparse: true, // Allow empty phone numbers
     },
+    createdRooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
+    joinedRooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
   },
+  
   {
     timestamps: true, // Adds createdAt & updatedAt automatically
   }
