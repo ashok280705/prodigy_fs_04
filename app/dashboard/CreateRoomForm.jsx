@@ -1,37 +1,62 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ CORRECT
 
 export default function CreateRoomForm() {
+  const router = useRouter(); // ✅
+
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [friendEmail, setFriendEmail] = useState("");
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
-    if (!roomName.trim()) return;
+
+    if (!roomName.trim()) {
+      alert("Room name is required");
+      return;
+    }
+
+    if (!roomId.trim()) {
+      alert("Room ID is required");
+      return;
+    }
+
+    console.log("Sending Room ID:", roomId.trim());
 
     const res = await fetch("/api/room/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: roomName, roomId }),
+      body: JSON.stringify({
+        name: roomName.trim(),
+        roomId: roomId.trim(),
+      }),
     });
 
     const data = await res.json();
+    console.log("API Response:", data);
 
-    if (data?.room?.roomId) {
-      window.location.href = `/chat/${data.room.roomId}`;
+    if (res.ok && data?.room?.roomId) {
+      alert("Room created successfully!");
+
+      // ✅ Clear fields AFTER nav
+      setRoomName("");
+      setRoomId("");
     } else {
-      alert(data.error || "Something went wrong");
+      alert(data.error || "Something went wrong.");
     }
   };
 
   const handleFindFriend = async (e) => {
     e.preventDefault();
-    if (!friendEmail.trim()) return;
 
-    // For now, just navigate or log — you’d implement invite logic in a real app
-    alert(`This would search for: ${friendEmail}`);
+    if (!friendEmail.trim()) {
+      alert("Please enter your friend's email.");
+      return;
+    }
+
+    alert(`Searching for: ${friendEmail}`);
   };
 
   return (
@@ -53,7 +78,7 @@ export default function CreateRoomForm() {
 
         <input
           type="text"
-          placeholder="Custom Room ID (optional)"
+          placeholder="Custom Room ID"
           value={roomId}
           onChange={(e) => setRoomId(e.target.value)}
           className="w-full p-3 mb-4 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -79,7 +104,7 @@ export default function CreateRoomForm() {
           placeholder="Friend's email"
           value={friendEmail}
           onChange={(e) => setFriendEmail(e.target.value)}
-          className="w-full p-3 mb-4 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 mb-4 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
         />
 
         <button

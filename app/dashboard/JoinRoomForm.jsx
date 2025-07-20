@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function JoinRoomForm() {
   const [roomId, setRoomId] = useState("");
+  const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!roomId.trim()) return;
 
-    window.location.href = `/chat/${roomId}`;
+    router.push(`/chat/${roomId.trim()}`);
   };
 
   return (

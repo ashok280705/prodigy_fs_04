@@ -10,11 +10,7 @@ export default function ChatInput({ onSend }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
-
-    // Send to parent (or Socket.IO)
     onSend(message.trim());
-
-    // Clear input
     setMessage("");
   };
 

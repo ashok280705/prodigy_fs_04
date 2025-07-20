@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 
+
 const roomSchema = new mongoose.Schema(
   {
     name: {
@@ -25,9 +26,10 @@ const roomSchema = new mongoose.Schema(
       default: Date.now,
     },
     roomId: {
+      unique: true,
       type: String,
       required: true,
-      unique: true,}
+     }
   },
   { timestamps: true }
 );
