@@ -8,9 +8,9 @@ export default function LayoutWrapper({ children }) {
   const hideLayout = pathname === "/login" || pathname === "/register" || pathname === "/admin-login";
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-[100vh] bg-black text-white">
       {!hideLayout && (
-        <header className="bg-white shadow top-0 z-50 sticky">
+        <header className="bg-black shadow top-0 z-50 sticky">
           <Navbar />
         </header>
       )}
@@ -20,7 +20,7 @@ export default function LayoutWrapper({ children }) {
       </main>
 
       {!hideLayout && (
-        <footer className="bg-white shadow mt-8">
+        <footer className="bg-black shadow mt-8">
           <Footer />
         </footer>
       )}
