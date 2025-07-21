@@ -8,12 +8,11 @@ import ChatInput from "./ChatInput";
 import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function ChatRoom({ roomId, user }) {
+export default function ChatRoom({ roomId, user, roomName }) {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef(null);
   const router = useRouter();
 
-  // ✅ Load all messages for this room from DB
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -24,11 +23,9 @@ export default function ChatRoom({ roomId, user }) {
         console.error("Failed to fetch messages:", err);
       }
     };
-
     fetchMessages();
   }, [roomId]);
 
-  // ✅ Connect socket & listen for real-time messages and deletes
   useEffect(() => {
     const socket = getSocket();
     socketRef.current = socket;
@@ -36,7 +33,7 @@ export default function ChatRoom({ roomId, user }) {
     socket.emit("joinRoom", { roomId, user });
 
     socket.on("newMessage", (msg) => {
-      if (msg.sender.id === user.id) return; // skip echo
+      if (msg.sender.id === user.id) return;
       setMessages((prev) => [...prev, msg]);
     });
 
@@ -55,7 +52,6 @@ export default function ChatRoom({ roomId, user }) {
     };
   }, [roomId, user]);
 
-  // ✅ Send new message: saves to DB → broadcasts → updates local state
   const sendMessage = async (text) => {
     const payload = {
       text,
@@ -73,17 +69,13 @@ export default function ChatRoom({ roomId, user }) {
       const data = await res.json();
       const savedMsg = data.message;
 
-      // Broadcast to others
       socketRef.current.emit("sendMessage", savedMsg);
-
-      // Update local instantly
       setMessages((prev) => [...prev, savedMsg]);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
 
-  // ✅ Delete message for everyone: DB + broadcast + local update
   const handleDeleteForEveryone = async (messageId) => {
     const ok = confirm("Delete for everyone?");
     if (!ok) return;
@@ -115,7 +107,7 @@ export default function ChatRoom({ roomId, user }) {
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-black to-gray-950 rounded-xl shadow-lg p-4 md:p-6 w-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg md:text-2xl font-semibold">Chat Room</h2>
+        <h2 className="text-lg md:text-2xl font-semibold">{roomName || "Chat Room"}</h2>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

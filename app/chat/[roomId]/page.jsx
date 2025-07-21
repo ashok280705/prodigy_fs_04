@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import ChatRoom from "./ChatRoom";
 
 export default async function Page({ params }) {
-  const { roomId } = await params; // ✅ no need to await params
+  const { roomId } = params; // ✅ No need to await
 
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
@@ -21,7 +21,7 @@ export default async function Page({ params }) {
   return (
     <main className="min-h-screen flex flex-col items-center justify-start px-4 py-16 bg-black text-white">
       <div className="w-full max-w-5xl flex flex-col flex-1">
-        <ChatRoom roomId={roomId} user={session.user} />
+        <ChatRoom roomId={roomId} user={session.user} roomName={room.name} />
       </div>
     </main>
   );
