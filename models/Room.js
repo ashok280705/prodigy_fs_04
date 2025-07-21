@@ -2,23 +2,21 @@
 
 import mongoose from "mongoose";
 
-
 const roomSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
+      type: String, // ✅ Should be capital 'String'
       required: true,
       trim: true,
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+       required: true,
+      type: String, // ✅ Use String, not ObjectId — works for Google ID or DB ID
       required: true,
     },
     members: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: String, // ✅ Use String too, not ObjectId — same reason
       },
     ],
     createdAt: {
@@ -26,10 +24,10 @@ const roomSchema = new mongoose.Schema(
       default: Date.now,
     },
     roomId: {
-      unique: true,
       type: String,
+      unique: true,
       required: true,
-     }
+    },
   },
   { timestamps: true }
 );

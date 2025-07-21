@@ -48,12 +48,14 @@ export async function POST(req) {
     );
   }
 
-  const newRoom = new Room({
-    roomId: cleanRoomId,
-    name: name.trim(),
-    createdBy: user._id,
-    members: [user._id],
-  });
+
+   const newRoom = new Room({
+  name: name.trim(),
+  roomId: cleanRoomId,
+  createdBy: session.user.id, // ✅ force to string
+  members: [session.user.id],
+});
+
 
   try {
     await newRoom.save();

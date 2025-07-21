@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import ChatRoom from "./ChatRoom";
 
 export default async function Page({ params }) {
-  const { roomId } = params; // ✅ No need to await
+  const { roomId } = await params; // ✅ No need to await
 
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
