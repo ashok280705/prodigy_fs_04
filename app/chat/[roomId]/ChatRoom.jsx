@@ -13,7 +13,7 @@ export default function ChatRoom({ roomId, user }) {
   const socketRef = useRef(null);
   const router = useRouter();
 
-  // 1️⃣ Load messages
+  // Load messages
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -27,7 +27,7 @@ export default function ChatRoom({ roomId, user }) {
     fetchMessages();
   }, [roomId]);
 
-  // 2️⃣ Connect socket
+  // Connect socket
   useEffect(() => {
     const socket = getSocket();
     socketRef.current = socket;
@@ -35,7 +35,7 @@ export default function ChatRoom({ roomId, user }) {
     socket.emit("joinRoom", { roomId, user });
 
     socket.on("newMessage", (msg) => {
-      if (msg.sender.id === user.id) return; // skip own echo
+      if (msg.sender.id === user.id) return; // skip echo
       setMessages((prev) => [...prev, msg]);
     });
 
@@ -45,7 +45,7 @@ export default function ChatRoom({ roomId, user }) {
     };
   }, [roomId, user]);
 
-  // 3️⃣ Send message
+  // Send
   const sendMessage = async (text) => {
     const msg = {
       text,
@@ -68,30 +68,28 @@ export default function ChatRoom({ roomId, user }) {
     setMessages((prev) => [...prev, msg]);
   };
 
-  // ✅ Exit
+  // Exit
   const handleExitRoom = () => {
-    if (socketRef.current) {
-      socketRef.current.emit("leaveRoom", { roomId });
-    }
+    if (socketRef.current) socketRef.current.emit("leaveRoom", { roomId });
     router.push("/dashboard");
   };
 
   return (
-    <div className="flex flex-col h-full bg-black rounded-xl shadow-lg p-4 max-w-4xl mx-auto w-full">
+    <div className="flex flex-col h-full bg-gradient-to-b from-black to-gray-950 rounded-xl shadow-lg p-4 md:p-6 w-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg md:text-xl font-semibold text-white">Chat Room</h2>
+        <h2 className="text-lg md:text-2xl font-semibold">Chat Room</h2>
         <motion.button
-          whileHover={{ scale: 1.05, rotate: 2 }}
-          whileTap={{ scale: 0.95, rotate: -2 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleExitRoom}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold shadow-lg hover:shadow-red-500/30 transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-transparent text-white font-semibold shadow hover:shadow-red-500/40 transition"
         >
           <LogOut size={18} />
-          Exit Room
+          <span className="hidden sm:inline">Exit Room</span>
         </motion.button>
       </div>
 
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden rounded-lg">
         <MessageList messages={messages} currentUser={user} />
         <ChatInput onSend={sendMessage} />
       </div>

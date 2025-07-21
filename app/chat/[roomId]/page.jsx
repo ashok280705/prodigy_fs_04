@@ -13,13 +13,14 @@ export default async function Page({ params }) {
 
   await dbConnect();
   const room = await Room.findOne({ roomId: params.roomId });
-
   if (!room) redirect("/");
 
   return (
-    <div className=" pt-[10vh] min-h-[100vh] bg-black text-white flex flex-col p-6">
-      <h1 className="text-2xl font-bold mb-4">Room: {room.name}</h1>
-      <ChatRoom roomId={params.roomId} user={session.user} />
-    </div>
+    <main className="min-h-screen flex flex-col items-center justify-start px-4 py-15 bg-black text-white">
+      <div className="w-full max-w-5xl flex flex-col flex-1">
+
+        <ChatRoom roomId={params.roomId} user={session.user} />
+      </div>
+    </main>
   );
 }
