@@ -21,18 +21,6 @@ const roomSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    messages: [
-    {
-      text: String,
-      sender: {
-        id: String,
-        name: String,
-
-      },
-      createdAt: { type: Date, default: Date.now }
-    }
-  ]
-,
     createdAt: {
       type: Date,
       default: Date.now,

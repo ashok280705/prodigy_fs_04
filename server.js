@@ -1,4 +1,3 @@
-// server.js
 const { createServer } = require("node:http");
 const next = require("next");
 const { Server } = require("socket.io");
@@ -15,18 +14,23 @@ app.prepare().then(() => {
     handler(req, res);
   });
 
-  const io = new Server(httpServer);
+  const io = new Server(httpServer, {
+    path: "/api/socket"
+  });
 
   io.on("connection", (socket) => {
-    console.log("Socket connected: ", socket.id);
+    console.log("Socket connected:", socket.id);
 
-    socket.on("joinRoom", ({ roomId, user }) => {
+    socket.on("joinRoom", ({ roomId }) => {
       socket.join(roomId);
-      console.log(`${user.name} joined room: ${roomId}`);
     });
 
     socket.on("sendMessage", (msg) => {
       io.to(msg.roomId).emit("newMessage", msg);
+    });
+
+    socket.on("deleteMessageForEveryone", ({ messageId, roomId }) => {
+      socket.to(roomId).emit("deleteMessageForEveryone", { messageId });
     });
 
     socket.on("disconnect", () => {

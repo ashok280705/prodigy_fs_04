@@ -1,3 +1,4 @@
+// models/Message.js
 import mongoose, { Schema, models } from "mongoose";
 
 const MessageSchema = new Schema(
@@ -9,8 +10,7 @@ const MessageSchema = new Schema(
     },
     sender: {
       id: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: String, // ✅ allow both ObjectId and Google ID as string
         required: true,
       },
       name: {
@@ -19,8 +19,13 @@ const MessageSchema = new Schema(
       },
     },
     roomId: {
+      ref: "Room",
       type: String,
       required: true,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

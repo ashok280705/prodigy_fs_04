@@ -13,7 +13,7 @@ export default function ChatRoom({ roomId, user }) {
   const socketRef = useRef(null);
   const router = useRouter();
 
-  // Load messages
+  // ✅ Load all messages for this room from DB
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -24,10 +24,11 @@ export default function ChatRoom({ roomId, user }) {
         console.error("Failed to fetch messages:", err);
       }
     };
+
     fetchMessages();
   }, [roomId]);
 
-  // Connect socket
+  // ✅ Connect socket & listen for real-time messages and deletes
   useEffect(() => {
     const socket = getSocket();
     socketRef.current = socket;
@@ -39,36 +40,73 @@ export default function ChatRoom({ roomId, user }) {
       setMessages((prev) => [...prev, msg]);
     });
 
+    socket.on("deleteMessageForEveryone", ({ messageId }) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === messageId ? { ...msg, deleted: true, text: "" } : msg
+        )
+      );
+    });
+
     return () => {
       socket.emit("leaveRoom", { roomId });
       socket.off("newMessage");
+      socket.off("deleteMessageForEveryone");
     };
   }, [roomId, user]);
 
-  // Send
+  // ✅ Send new message: saves to DB → broadcasts → updates local state
   const sendMessage = async (text) => {
-    const msg = {
+    const payload = {
       text,
       sender: { id: user.id, name: user.name },
       roomId,
-      createdAt: new Date().toISOString(),
     };
 
     try {
-      await fetch(`/api/room/${roomId}/messages`, {
+      const res = await fetch(`/api/room/${roomId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(msg),
+        body: JSON.stringify(payload),
       });
-    } catch (err) {
-      console.error("Failed to save message:", err);
-    }
 
-    socketRef.current.emit("sendMessage", msg);
-    setMessages((prev) => [...prev, msg]);
+      const data = await res.json();
+      const savedMsg = data.message;
+
+      // Broadcast to others
+      socketRef.current.emit("sendMessage", savedMsg);
+
+      // Update local instantly
+      setMessages((prev) => [...prev, savedMsg]);
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
   };
 
-  // Exit
+  // ✅ Delete message for everyone: DB + broadcast + local update
+  const handleDeleteForEveryone = async (messageId) => {
+    const ok = confirm("Delete for everyone?");
+    if (!ok) return;
+
+    try {
+      await fetch(`/api/room/${roomId}/messages`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messageId, mode: "everyone" }),
+      });
+
+      socketRef.current.emit("deleteMessageForEveryone", { messageId, roomId });
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === messageId ? { ...msg, deleted: true, text: "" } : msg
+        )
+      );
+    } catch (err) {
+      console.error("Failed to delete message:", err);
+    }
+  };
+
   const handleExitRoom = () => {
     if (socketRef.current) socketRef.current.emit("leaveRoom", { roomId });
     router.push("/dashboard");
@@ -90,7 +128,11 @@ export default function ChatRoom({ roomId, user }) {
       </div>
 
       <div className="flex flex-col flex-1 overflow-hidden rounded-lg">
-        <MessageList messages={messages} currentUser={user} />
+        <MessageList
+          messages={messages}
+          currentUser={user}
+          onDeleteForEveryone={handleDeleteForEveryone}
+        />
         <ChatInput onSend={sendMessage} />
       </div>
     </div>
