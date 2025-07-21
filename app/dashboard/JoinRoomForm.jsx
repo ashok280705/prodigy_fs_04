@@ -17,19 +17,23 @@ export default function JoinRoomForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-900 p-6 rounded-lg shadow-md"
+      className="bg-black p-8 rounded-xl border border-gray-800 shadow-2xl"
     >
-      <h2 className="text-xl font-bold mb-4">Join a Room</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white text-center">
+        Join Room
+      </h2>
+      
       <input
         type="text"
-        placeholder="Room ID"
+        placeholder="Enter Room ID"
         value={roomId}
         onChange={(e) => setRoomId(e.target.value)}
-        className="w-full p-3 mb-4 rounded bg-gray-800 text-white"
+        className="w-full p-4 mb-6 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-white focus:outline-none transition-colors duration-200"
       />
+      
       <button
         type="submit"
-        className="w-full bg-green-600 py-3 rounded hover:bg-green-700"
+        className="w-full bg-white text-black font-bold py-4 rounded-lg hover:bg-gray-200 transition-colors duration-200"
       >
         Join Room
       </button>
