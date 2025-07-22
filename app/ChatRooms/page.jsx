@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 export default function ChatroomPage() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,7 @@ export default function ChatroomPage() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 min-h-screen text-white mt-16">
+      <main className="relative z-10 min-h-screen text-white mt-16 container mx-auto">
         {/* Header */}
         <div className={`p-4 md:p-8 transform transition-all duration-700 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <h1 className="text-2xl md:text-3xl font-bold mb-2">All Chat Rooms</h1>
