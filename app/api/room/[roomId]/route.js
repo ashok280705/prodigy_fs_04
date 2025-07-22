@@ -1,11 +1,12 @@
-// /api/room/[roomId]/route.js
-
 import dbConnect from "@/lib/db";
 import Room from "@/models/Room";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-// ✅ GET a single room info
+// GET
 export async function GET(_req, { params }) {
-  const { roomId } = params;
+  const { roomId } = await params;
 
   await dbConnect();
 
@@ -18,42 +19,30 @@ export async function GET(_req, { params }) {
   return new Response(JSON.stringify({ room }), { status: 200 });
 }
 
-// ✅ DELETE an entire room (optional!)
-export async function PATCH(req, { params }) {
-  await dbConnect();
-  const session = await getServerSession(authOptions);
+// PATCH
 
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { roomId } = params;
-  const { name } = await req.json();
-
-  const room = await Room.findOne({ roomId });
-  if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
-
-  // ✅ Check owner
-  if (room.owner.toString() !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  room.name = name;
-  await room.save();
-
-  return NextResponse.json({ message: "Room updated", room });
-}
-
+// DELETE
 export async function DELETE(req, { params }) {
   await dbConnect();
   const session = await getServerSession(authOptions);
 
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { roomId } = params;
-
+  const { roomId } = await params;
   const room = await Room.findOne({ roomId });
-  if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
 
-  if (room.owner.toString() !== session.user.id) {
+  if (!room) {
+    return NextResponse.json({ error: "Room not found" }, { status: 404 });
+  }
+
+  if (!room.createdBy) {
+    return NextResponse.json({ error: "Room has no owner" }, { status: 500 });
+  }
+
+  if (room.createdBy.toString() !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
