@@ -55,7 +55,7 @@ export default function Navbar() {
           <NavLink href="/dashboard" icon={<Home className="w-5 h-5" />}>
             Dashboard
           </NavLink>
-          <NavLink href="/chat" icon={<MessageCircleMore className="w-5 h-5" />}>
+          <NavLink href="/ChatRooms" icon={<MessageCircleMore className="w-5 h-5" />}>
             Chat Rooms
           </NavLink>
 
