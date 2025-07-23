@@ -17,7 +17,6 @@ export default function MessageList({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 👇 Add unique hint if needed
   const getInitials = (msg) => {
     const name = msg.sender?.name || "U";
     const initials = name
@@ -26,9 +25,11 @@ export default function MessageList({
       .join("")
       .toUpperCase()
       .slice(0, 2);
+
     const hint = msg.sender?.id
-      ? msg.sender.id.toString().slice(-2) // Take last 2 digits of ID
+      ? msg.sender.id.toString().slice(-2)
       : "";
+
     return `${initials}${hint}`;
   };
 
@@ -36,20 +37,18 @@ export default function MessageList({
     <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden px-4 py-6 bg-gradient-to-b from-gray-950 to-black rounded-2xl border border-gray-800/50 h-[70vh] backdrop-blur-sm">
       <AnimatePresence initial={false}>
         {messages.map((msg, idx) => {
-          const isMine =
-            msg.sender?.id?.toString() === currentUser?.id?.toString();
-
+          const isMine = msg.sender?.id?.toString() === currentUser?.id?.toString();
           const isConsecutive =
             idx > 0 && messages[idx - 1].sender?.id === msg.sender?.id;
 
           return (
             <motion.div
               key={`message-${msg._id || idx}`}
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{
-                duration: 0.3,
+                duration: 0.25,
                 type: "spring",
                 stiffness: 400,
                 damping: 30,
@@ -103,9 +102,11 @@ export default function MessageList({
                           : "bg-gradient-to-br from-gray-800 to-gray-900 text-gray-100 shadow-black/30 border border-gray-700/50"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed break-words overflow-wrap break-word">
+                      <p className="text-sm leading-relaxed break-words">
                         {msg.deleted ? (
-                          <i className="text-gray-400 italic">This message was deleted.</i>
+                          <i className="text-gray-400 italic">
+                            This message was deleted.
+                          </i>
                         ) : (
                           msg.text || "No content"
                         )}
@@ -125,7 +126,11 @@ export default function MessageList({
                             : "--:--"}
                         </span>
                         {isMine && !msg.deleted && (
-                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3 }}>
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.3 }}
+                          >
                             <CheckCheck size={12} className="text-gray-300/70" />
                           </motion.div>
                         )}

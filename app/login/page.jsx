@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Lock, MessageCircleMore } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,32 +25,48 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black to-gray-900 text-white px-4">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white px-4 relative overflow-hidden">
+      {/* Glows */}
+      <div className="absolute -top-20 -left-20 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(0,128,255,0.1),transparent)] blur-3xl"></div>
+      <div className="absolute bottom-0 right-[-10%] w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(236,72,153,0.1),transparent)] blur-3xl"></div>
+
       <motion.form
         onSubmit={handleLogin}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="bg-gray-900 p-8 rounded-xl shadow-xl w-full max-w-md"
+        className="relative z-10 bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-800"
       >
         <div className="flex justify-center mb-6">
           <motion.div
-            initial={{ rotate: -20, scale: 0.8 }}
+            initial={{ rotate: -10, scale: 0.8 }}
             animate={{ rotate: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: "backOut" }}
           >
-            <Lock className="w-12 h-12 text-blue-500" />
+            <Lock className="w-12 h-12 text-blue-500 drop-shadow-lg" />
           </motion.div>
         </div>
 
-        <h2 className="text-3xl font-bold mb-6 text-center">Sign in to Chat</h2>
+        <Link href="/" className="flex items-center justify-center gap-2 mb-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <MessageCircleMore className="w-7 h-7 text-pink-500" />
+            <span className="text-2xl font-extrabold bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">
+              Chatify
+            </span>
+          </motion.div>
+        </Link>
 
         <label className="block mb-2 text-sm font-semibold">Email</label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full mb-4 p-3 rounded-lg bg-gray-800/60 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
           placeholder="you@example.com"
           required
         />
@@ -60,14 +76,14 @@ export default function Login() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-6 p-3 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full mb-6 p-3 rounded-lg bg-gray-800/60 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
           placeholder="••••••••"
           required
         />
 
         <button
           type="submit"
-          className="w-full bg-blue-600 py-3 rounded-full font-semibold hover:bg-blue-700 transition mb-4"
+          className="w-full bg-gradient-to-r from-pink-500 to-purple-600 py-3 rounded-full font-semibold hover:from-pink-400 hover:to-purple-500 transform hover:scale-105 transition mb-4 shadow-lg"
         >
           Sign in
         </button>
@@ -75,7 +91,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleGoogle}
-          className="w-full flex items-center justify-center gap-2 bg-white text-black py-3 rounded-full font-semibold hover:bg-gray-200 transition mb-4"
+          className="w-full flex items-center justify-center gap-2 bg-white text-black py-3 rounded-full font-semibold hover:bg-gray-200 transition mb-4 shadow"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,16 +116,19 @@ export default function Login() {
             />
             <path fill="none" d="M1 1h46v46H1z" />
           </svg>
-          Sign in with Google
+          Continue with Google
         </button>
 
         <p className="text-sm text-center text-gray-400">
-          Don't have an account?{" "}
-          <Link href="/register" className="underline text-white hover:text-blue-400">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="underline text-white hover:text-pink-400"
+          >
             Sign up here
           </Link>
         </p>
       </motion.form>
-    </div>
+    </main>
   );
 }

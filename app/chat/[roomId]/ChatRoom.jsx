@@ -7,6 +7,7 @@ import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 export default function ChatRoom({ roomId, user, roomName }) {
   const [messages, setMessages] = useState([]);
@@ -20,7 +21,7 @@ export default function ChatRoom({ roomId, user, roomName }) {
         const data = await res.json();
         setMessages(data.messages || []);
       } catch (err) {
-        console.error("Failed to fetch messages:", err);
+        toast.error("Failed to load messages.");
       }
     };
     fetchMessages();
@@ -43,6 +44,7 @@ export default function ChatRoom({ roomId, user, roomName }) {
           msg._id === messageId ? { ...msg, deleted: true, text: "" } : msg
         )
       );
+      toast("A message was deleted for everyone.", { icon: "🗑️" });
     });
 
     return () => {
@@ -71,8 +73,9 @@ export default function ChatRoom({ roomId, user, roomName }) {
 
       socketRef.current.emit("sendMessage", savedMsg);
       setMessages((prev) => [...prev, savedMsg]);
+      toast.success("Message sent!");
     } catch (err) {
-      console.error("Failed to send message:", err);
+      toast.error("Failed to send message.");
     }
   };
 
@@ -94,13 +97,16 @@ export default function ChatRoom({ roomId, user, roomName }) {
           msg._id === messageId ? { ...msg, deleted: true, text: "" } : msg
         )
       );
+
+      toast.success("Message deleted for everyone!");
     } catch (err) {
-      console.error("Failed to delete message:", err);
+      toast.error("Failed to delete message.");
     }
   };
 
   const handleExitRoom = () => {
     if (socketRef.current) socketRef.current.emit("leaveRoom", { roomId });
+    toast("You left the room.", { icon: "👋" });
     router.push("/dashboard");
   };
 
