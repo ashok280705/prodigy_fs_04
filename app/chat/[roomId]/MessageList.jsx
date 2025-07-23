@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCheck, Trash2, User } from "lucide-react";
 
 export default function MessageList({
   messages,
   currentUser,
-  onDeleteForMe = () => {}, // fallback default
+  onDeleteForMe = () => {},
   onDeleteForEveryone,
 }) {
   const bottomRef = useRef(null);
@@ -17,25 +17,30 @@ export default function MessageList({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const getInitials = (name) =>
-    name
-      ?.split(" ")
+  // 👇 Add unique hint if needed
+  const getInitials = (msg) => {
+    const name = msg.sender?.name || "U";
+    const initials = name
+      .split(" ")
       .map((w) => w[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
+    const hint = msg.sender?.id
+      ? msg.sender.id.toString().slice(-2) // Take last 2 digits of ID
+      : "";
+    return `${initials}${hint}`;
+  };
 
   return (
     <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden px-4 py-6 bg-gradient-to-b from-gray-950 to-black rounded-2xl border border-gray-800/50 h-[70vh] backdrop-blur-sm">
       <AnimatePresence initial={false}>
         {messages.map((msg, idx) => {
           const isMine =
-            msg.sender?.id?.toString() === currentUser?.id?.toString() ||
-            msg.sender?.name?.toLowerCase() === currentUser?.name?.toLowerCase();
+            msg.sender?.id?.toString() === currentUser?.id?.toString();
 
           const isConsecutive =
-            idx > 0 &&
-            messages[idx - 1].sender?.name === msg.sender?.name;
+            idx > 0 && messages[idx - 1].sender?.id === msg.sender?.id;
 
           return (
             <motion.div
@@ -51,11 +56,7 @@ export default function MessageList({
               }}
               className={`w-full flex ${isConsecutive ? "mt-1" : "mt-4"}`}
             >
-              <div
-                className={`w-full flex ${
-                  isMine ? "justify-end" : "justify-start"
-                }`}
-              >
+              <div className={`w-full flex ${isMine ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`flex items-end gap-2 max-w-[80%] ${
                     isMine ? "flex-row-reverse" : "flex-row"
@@ -72,7 +73,7 @@ export default function MessageList({
                           : "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
                       }`}
                     >
-                      {getInitials(msg.sender?.name || "U")}
+                      {getInitials(msg)}
                     </motion.div>
                   )}
 
@@ -87,9 +88,7 @@ export default function MessageList({
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.15 }}
                         className={`text-xs font-semibold mb-1 px-1 ${
-                          isMine
-                            ? "text-right text-green-400"
-                            : "text-left text-blue-400"
+                          isMine ? "text-right text-green-400" : "text-left text-blue-400"
                         }`}
                       >
                         {isMine ? "You" : msg.sender?.name || "Unknown"}
@@ -106,9 +105,7 @@ export default function MessageList({
                     >
                       <p className="text-sm leading-relaxed break-words overflow-wrap break-word">
                         {msg.deleted ? (
-                          <i className="text-gray-400 italic">
-                            This message was deleted.
-                          </i>
+                          <i className="text-gray-400 italic">This message was deleted.</i>
                         ) : (
                           msg.text || "No content"
                         )}
@@ -128,15 +125,8 @@ export default function MessageList({
                             : "--:--"}
                         </span>
                         {isMine && !msg.deleted && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.3 }}
-                          >
-                            <CheckCheck
-                              size={12}
-                              className="text-gray-300/70"
-                            />
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3 }}>
+                            <CheckCheck size={12} className="text-gray-300/70" />
                           </motion.div>
                         )}
                       </div>
@@ -176,24 +166,6 @@ export default function MessageList({
                               </button>
                             </div>
                           )}
-                        </div>
-                      )}
-
-                      {!isConsecutive && (
-                        <div
-                          className={`absolute bottom-0 ${
-                            isMine
-                              ? "right-0 transform translate-x-1 translate-y-1"
-                              : "left-0 transform -translate-x-1 translate-y-1"
-                          }`}
-                        >
-                          <div
-                            className={`w-3 h-3 ${
-                              isMine
-                                ? "bg-gradient-to-br from-green-600 to-green-700"
-                                : "bg-gradient-to-br from-gray-800 to-gray-900 border-l border-b border-gray-700/50"
-                            } transform rotate-45`}
-                          />
                         </div>
                       )}
                     </motion.div>
