@@ -93,27 +93,7 @@ export default function CreateRoomForm() {
       </form>
 
       {/* Find Friend */}
-      <form
-        onSubmit={handleFindFriend}
-        className="flex-1 bg-gray-900 p-6 rounded-lg shadow-md"
-      >
-        <h2 className="text-xl font-bold mb-4">Find a Friend to Chat</h2>
-
-        <input
-          type="email"
-          placeholder="Friend's email"
-          value={friendEmail}
-          onChange={(e) => setFriendEmail(e.target.value)}
-          className="w-full p-3 mb-4 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 py-3 rounded hover:bg-green-700 font-semibold transition"
-        >
-          Find Friend
-        </button>
-      </form>
+    
     </div>
   );
 }

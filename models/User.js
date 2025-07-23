@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     createdRooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
     joinedRooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   
   {

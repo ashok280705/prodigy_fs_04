@@ -26,8 +26,6 @@ export default function DashboardPage() {
     fetchRooms();
   }, [status]);
 
-  
-
   const handleDelete = async (roomId) => {
     if (!confirm("Are you sure you want to delete this room?")) return;
 
@@ -88,7 +86,41 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
+        {/* Talk With Friends Button */}
+        <div className="max-w-6xl mx-auto mb-12 px-4 md:px-8 text-center">
+          <button
+            onClick={() =>
+              (window.location.href = "/friends-talking-dashboard")
+            }
+            className="
+      inline-flex items-center gap-2 
+      px-8 py-3 
+      bg-gradient-to-r from-purple-600 to-pink-600 
+      text-white font-semibold 
+      rounded-full 
+      shadow-lg 
+      hover:from-purple-700 hover:to-pink-700 
+      hover:shadow-pink-500/40 
+      transition-all duration-300 transform 
+      hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-500
+    "
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z"
+              />
+            </svg>
+            Talk With Friends
+          </button>
+        </div>
         {/* Your Rooms Section */}
         <div className="max-w-6xl mx-auto p-4 md:px-8">
           <div
@@ -165,7 +197,6 @@ export default function DashboardPage() {
                               </p>
                             )}
                             <div className="flex space-x-2">
-                              
                               <button
                                 onClick={() => handleDelete(room.roomId)}
                                 className="flex-1 px-3 py-2 text-sm text-red-400 border border-red-400/30 rounded hover:bg-red-400/10 hover:border-red-400/50 transition-all duration-200 transform hover:scale-105"
@@ -222,7 +253,6 @@ export default function DashboardPage() {
                                 </p>
                               )}
                               <div className="flex space-x-2">
-                                
                                 <button
                                   onClick={() => handleDelete(room.roomId)}
                                   className="flex-1 px-3 py-2 text-sm text-red-400 border border-red-400/30 rounded hover:bg-red-400/10 hover:border-red-400/50 transition-all duration-200"

@@ -10,7 +10,7 @@ const roomSchema = new mongoose.Schema(
       trim: true,
     },
     createdBy: {
-       required: true,
+      required: true,
       type: String, // ✅ Use String, not ObjectId — works for Google ID or DB ID
       required: true,
     },

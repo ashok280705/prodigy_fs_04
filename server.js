@@ -15,12 +15,13 @@ app.prepare().then(() => {
   });
 
   const io = new Server(httpServer, {
-    path: "/api/socket"
+    path: "/api/socket",
   });
 
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
+    // ✅ PUBLIC rooms
     socket.on("joinRoom", ({ roomId }) => {
       socket.join(roomId);
     });
@@ -33,6 +34,20 @@ app.prepare().then(() => {
       socket.to(roomId).emit("deleteMessageForEveryone", { messageId });
     });
 
+    // ✅ ✅ PRIVATE rooms
+    socket.on("joinPrivateRoom", ({ roomId }) => {
+      console.log(`Socket ${socket.id} joined private room: ${roomId}`);
+      socket.join(roomId);
+    });
+
+    socket.on("sendPrivateMessage", (msg) => {
+      console.log(`Private message:`, msg);
+      socket.to(msg.roomId).emit("newPrivateMessage", msg);
+    });
+
+    socket.on("leavePrivateRoom", ({ roomId }) => {
+      socket.leave(roomId);
+    });
     socket.on("disconnect", () => {
       console.log("Socket disconnected:", socket.id);
     });
